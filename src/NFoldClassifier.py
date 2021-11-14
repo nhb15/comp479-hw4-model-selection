@@ -23,7 +23,8 @@ def populateNFoldDataSets(n):
 def main():
     train_df_initial, features_initial, labels_initial = file_ingestion.readFromCSV()
     n_test_sets = populateNFoldDataSets(10)
-    n_prediction_scores = []
+    n_prediction_accuracy_scores = []
+    n_prediction_f1_scores = []
 
     for test_set in n_test_sets:
         train_df = train_df_initial.copy(deep=True)
@@ -46,6 +47,16 @@ def main():
             test_set_labels.append(feature_values.iloc[60])
             n_fold_predictions.append(n_fold_model.predict([feature_values_without_label]))
 
-        n_prediction_scores.append(AccuracyUtil.getAccuracySkleran(test_set_labels, n_fold_predictions))
+        n_prediction_accuracy_scores.append(AccuracyUtil.getAccuracySklearn(test_set_labels, n_fold_predictions))
+        n_prediction_f1_scores.append(AccuracyUtil.getF1Sklearn(test_set_labels, n_fold_predictions))
+    print(f'accuracies: {n_prediction_accuracy_scores}')
+    print(f'f1s: {n_prediction_f1_scores}')
+
+    average_accuracy = sum(n_prediction_accuracy_scores) / len(n_prediction_accuracy_scores)
+    average_f1 = sum(n_prediction_f1_scores) / len(n_prediction_f1_scores)
+
+    print(f'average accuracy: {average_accuracy}')
+    print(f'average f1: {average_f1}')
+
 if __name__ == "__main__":
     main()
